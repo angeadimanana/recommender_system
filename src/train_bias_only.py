@@ -14,7 +14,7 @@ def update_bias(data_train_by_user, lamda, gamma, movie_biases):
         bias = bias / (lamda * count + gamma)
         biases[i] = bias
     
-    return biases
+   
 
 
 def cost_function(data_train, user_biases, movie_biases, lamda, gamma):
@@ -47,9 +47,10 @@ def train(data_train_by_user, data_train_by_movie, data_test_by_user, data_test_
 
     for tmp in range(N) :
         update_bias(data_train_by_user, lamda,gamma, movie_biases)
+        
         update_bias(data_train_by_movie, lamda, gamma, user_biases)
 
-        rmse_train, cout_train = cost_function(data_test_by_user, user_biases, movie_biases, lamda, gamma)
+        rmse_train, cout_train = cost_function(data_train_by_user, user_biases, movie_biases, lamda, gamma)
         rmse_test, cout_test  = cost_function(data_test_by_user, user_biases, movie_biases, lamda, gamma) 
         
         costs_train.append(cout_train)
