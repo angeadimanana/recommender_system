@@ -1,0 +1,14 @@
+# Ignore big data
+ml-25m/*.csv
+ml-32m/*.csv
+
+
+ml-25m/*.rar
+
+
+*.zip
+*.tar.gz
+*.h5
+*.pyc
+__pycache__/
+.DS_Store
