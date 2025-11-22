@@ -97,4 +97,3 @@ def train(data_train_by_user, data_train_by_movie, data_test_by_user, k, lamda, 
 
     return user_biases, movie_biases, costs_train, rmse_train_list, rmse_test_list, costs_test
 
-
