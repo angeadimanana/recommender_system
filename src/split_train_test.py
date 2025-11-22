@@ -64,6 +64,7 @@ def split_train_test(filename, split_ratio):
             data_test_by_user[user_idx].append((movie_idx, rating))
             data_test_by_movie[movie_idx].append((user_idx, rating))
 
-  return userid_to_idx, idx_to_userid, data_train_by_user, data_test_by_user,movieid_to_idx, idx_to_movieid, data_train_by_movie, data_test_by_movie
+  return (userid_to_idx, idx_to_userid, data_train_by_user, data_test_by_user,movieid_to_idx, 
+          idx_to_movieid, data_train_by_movie, data_test_by_movie)
 
 
