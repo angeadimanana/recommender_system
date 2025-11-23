@@ -43,7 +43,7 @@ def cost_function(data_train, u_biases, m_biases, u, v, lamda, gamma, tau):
             continue
 
         data_array = np.array(data_train[x])
-        indices = data_array[:, 0]
+        indices = data_array[:, 0].astype(int)
         rating = data_array[:, 1]
 
         # Predict
@@ -69,8 +69,9 @@ def cost_function(data_train, u_biases, m_biases, u, v, lamda, gamma, tau):
 
 
 def train(data_train_by_user, data_train_by_movie,data_test_by_user, 
-              m, n, k, lamda, gamma, tau, N):
-
+             k, lamda, gamma, tau, N):
+    m = len(data_train_by_user)
+    n = len(data_train_by_movie)
     user_biases = np.zeros(m)
     movie_biases = np.zeros(n)
     u = np.random.randn(m, k) / np.sqrt(k)
