@@ -1,0 +1,11 @@
+movie_idx,movie_id,title,genres,score
+613,7153,"Lord of the Rings: The Return of the King, The (2003)",Action|Adventure|Drama|Fantasy,1.0143847021869241
+339,4993,"Lord of the Rings: The Fellowship of the Ring, The (2001)",Adventure|Fantasy,0.9851785506113135
+596,5952,"Lord of the Rings: The Two Towers, The (2002)",Adventure|Fantasy,0.9758262739879184
+15,260,Star Wars: Episode IV - A New Hope (1977),Action|Adventure|Sci-Fi,0.9069336744098887
+53,1196,Star Wars: Episode V - The Empire Strikes Back (1980),Action|Adventure|Sci-Fi,0.8266696055605444
+415,1,Toy Story (1995),Adventure|Animation|Children|Comedy|Fantasy,0.7317679074112828
+60,1210,Star Wars: Episode VI - Return of the Jedi (1983),Action|Adventure|Sci-Fi,0.720150029915957
+223,1198,Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981),Action|Adventure,0.7161434974930082
+187,595,Beauty and the Beast (1991),Animation|Children|Fantasy|Musical|Romance|IMAX,0.7142354714853757
+1287,3114,Toy Story 2 (1999),Adventure|Animation|Children|Comedy|Fantasy,0.6765959966148313
