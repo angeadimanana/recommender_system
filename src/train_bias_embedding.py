@@ -33,23 +33,23 @@ def cost_function(data_train_by_user, user_biases, movie_biases,u,v,  lamda, gam
         loss_train += (r - u[x]@v[n] - user_biases[x] - movie_biases[n])**2
         count += 1
     
-    l_for_u = 0
-    l_for_v = 0
-    for x in range(m):
-      l_for_u += u[x]@u[x]
+  l_for_u = 0
+  l_for_v = 0
+  for x in range(m):
+    l_for_u += u[x]@u[x]
 
-    for d in range(n):
-      l_for_v += v[d]@v[d]
+  for d in range(n):
+    l_for_v += v[d]@v[d]
 
-    r_train = np.sqrt(loss_train / count)
+  r_train = np.sqrt(loss_train / count)
 
-    loss_train =  lamda * loss_train /2
-    loss_train = loss_train + l_for_u * tau/2
-    loss_train = loss_train + l_for_v * tau/2
-    loss_train = loss_train + gamma * np.sum(user_biases**2) / 2
-    loss_train = loss_train + gamma * np.sum(movie_biases**2) / 2
+  loss_train =  lamda * loss_train /2
+  loss_train = loss_train + l_for_u * tau/2
+  loss_train = loss_train + l_for_v * tau/2
+  loss_train = loss_train + gamma * np.sum(user_biases**2) / 2
+  loss_train = loss_train + gamma * np.sum(movie_biases**2) / 2
 
-    return r_train, loss_train
+  return r_train, loss_train
 
 def train(data_train_by_user, data_train_by_movie, data_test_by_user, k, lamda, gamma,tau, N):
     m = len(data_train_by_user)
