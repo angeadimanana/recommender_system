@@ -1,6 +1,6 @@
 import numpy as np
 
-def split_train_test(filename, split_ratio):
+def split_train_test(filename, split_ratio,seed):
     """
     It builds structure for the data and split it in two sets:
     train and test with ratio (e.g 0.8 --> Train: 80%; Test: 20%)
@@ -21,7 +21,7 @@ def split_train_test(filename, split_ratio):
         list of the data_train by movieId,
         list of the data_test by movieId,
     """
-
+    np.random.seed(seed)
     userid_to_idx = {} # mapping the userid to index
     idx_to_userid = [] # mapping index to userid
     data_train_by_user =[] # store the moviename and its rate according the index of userid
@@ -67,7 +67,7 @@ def split_train_test(filename, split_ratio):
             
             line_count += 1
             
-            magnitude = max(10 ** (len(str(line_count)) - 1), 100) 
+            magnitude = max(10 ** (len(str(line_count)) - 1), 100000) 
             if line_count % magnitude == 0:
                 print(f"Loaded {line_count} lines...")
             
@@ -161,7 +161,7 @@ def split_train_test_temporal_ratio(filename, test_ratio=0.2):
     
             line_count += 1
             
-            magnitude = max(10 ** (len(str(line_count)) - 1), 100) 
+            magnitude = max(10 ** (len(str(line_count)) - 1), 100000) 
             if line_count % magnitude == 0:
                 print(f"Loaded {line_count} lines...")
             
