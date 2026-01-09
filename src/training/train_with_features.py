@@ -104,7 +104,19 @@ def update_movie_biases_and_vectors_with_features(indptr, indices, values,
 
             s_2 = tau * np.eye(k) + lamda * (U_subset.T @ U_subset)
             v[j] = np.linalg.solve(s_2, s_1)
-
+        
+        else:
+            # If no  ratings, we use only the priors
+            num_features = F_n[j]
+            if num_features > 0:
+                feature_sum = np.zeros(k)
+                for l in range(f_vectors.shape[0]):
+                    if F[j, l] > 0:  
+                        feature_sum += f_vectors[l]
+                
+                v[j] = feature_sum / np.sqrt(float(num_features))
+            else:
+                pass
     return v, m_biases
 
 
@@ -230,7 +242,7 @@ def cost_function_with_features(indptr, indices, values,
 
 def train_with_features(data_train_by_user, data_train_by_movie,
                         data_test_by_user, F, F_n,
-                        k, lamda, gamma, tau, N):
+                        k, lamda, gamma, tau, N, patience = 5,seed=42):
     """
     Train recommendation system with feature priors
 
@@ -247,21 +259,34 @@ def train_with_features(data_train_by_user, data_train_by_movie,
         user_biases, movie_biases, u, v, f_vectors: learned parameters
         costs_train, rmse_train, costs_test, rmse_test: training history
     """
+    np.random.seed(seed)
     m = len(data_train_by_user)
     n = len(data_train_by_movie)
     num_features = F.shape[1]
 
     # Initialize parameters
+    init_std = np.power(k, -0.25)
     user_biases = np.zeros(m)
     movie_biases = np.zeros(n)
-    u = np.random.randn(m, k) / np.sqrt(k)
-    v = np.random.randn(n, k) / np.sqrt(k)
-    f_vectors = np.random.randn(num_features, k) / np.sqrt(k)
-
+    u = np.random.randn(m, k) * init_std
+    f_vectors = np.random.randn(num_features, k) * init_std
+    v = np.zeros((n, k))
+    for j in range(n):
+        num_features_j = F_n[j]
+        if num_features_j > 0:
+            feature_sum = np.zeros(k)
+            for l in range(num_features):
+                if F[j, l] > 0:
+                    feature_sum += f_vectors[l]
+            v[j] = feature_sum / np.sqrt(float(num_features_j))
+        else:
+            v[j] = np.random.randn(k) * init_std
+    
     costs_train = []
     rmse_train = []
     costs_test = []
     rmse_test = []
+
 
     print(f"Training with features:")
     print(f"  k={k}, lamda={lamda}, gamma={gamma}, tau={tau}")
@@ -270,6 +295,9 @@ def train_with_features(data_train_by_user, data_train_by_movie,
     indptr_user, indices_user, values_user = convert_structure(data_train_by_user)
     indptr_movie, indices_movie, values_movie = convert_structure(data_train_by_movie)
     indptr_test_user, indices_test_user, values_test_user = convert_structure(data_test_by_user)
+
+    best_test_rmse = float('inf')
+    no_improvement = 0
 
     total_duration = 0
     start_time = time.time()
@@ -308,22 +336,36 @@ def train_with_features(data_train_by_user, data_train_by_movie,
             lamda, gamma, tau
         )
 
-        rmse_train.append(r_train)
-        costs_train.append(loss_train)
-        rmse_test.append(r_test)
-        costs_test.append(loss_test)
+
+        if r_test <= best_test_rmse:
+            best_test_rmse = r_test
+            no_improvement = 0
+        else:
+            no_improvement += 1
+
 
         if (iteration + 1) % 5 == 0 or iteration == 0:
             duration = time.time() - start_time
             total_duration += duration
 
-            print(f"Iter {iteration + 1:3d}/{N}\t"
+            print(f"Iteration {iteration + 1:3d}/{N}\t"
                   f"Train Loss: {loss_train:10.4f}\t"
                   f"Train RMSE: {r_train:6.4f}\t"
                   f"Test Loss: {loss_test:10.4f}\t"
                   f"Test RMSE: {r_test:6.4f}\t"
                   f"Time: {duration:6.2f}s")
             start_time = time.time()
+
+        if no_improvement > patience:
+            print(f"Early stopping at iteration {iteration + 1}")
+            break
+
+        
+        rmse_train.append(r_train)
+        costs_train.append(loss_train)
+        rmse_test.append(r_test)
+        costs_test.append(loss_test)
+
 
     print(f"\nTotal training time: {total_duration:.2f}s")
 
@@ -341,5 +383,6 @@ def train_with_features(data_train_by_user, data_train_by_movie,
         'rmse_test': rmse_test,
         'costs_train': costs_train,
         'costs_test': costs_test,
+        'iterations_done': len(rmse_train),
         'duration': total_duration
     }

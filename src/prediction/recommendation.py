@@ -7,7 +7,7 @@ from src.training.train_with_features import update_user_biases_and_vectors_with
 
 # for bias only
 def recommend_bias_only(user_bias, movie_biases,
-                       idx_to_movieid, movies_df, top_k=10):
+                       idx_to_movieid, movie_idx_rated, movies_df, top_k=10):
     """
     Make recommendations using bias-only model
 
@@ -30,6 +30,8 @@ def recommend_bias_only(user_bias, movie_biases,
 
     recommendations = []
     for movie_idx in top_indices:
+        if movie_idx in movie_idx_rated:
+          continue
         if len(recommendations) >= top_k:
             break
 
@@ -58,7 +60,7 @@ def recommend_bias_only(user_bias, movie_biases,
     return recommendations
 
 def get_user_recommendations(data_user, movie_biases,
-                             idx_to_movieid, movies_df,
+                             idx_to_movieid, movie_idx_rated ,movies_df,
                              lamda, gamma, top_k=10):
 
 
@@ -75,13 +77,13 @@ def get_user_recommendations(data_user, movie_biases,
                         lamda, gamma)
 
     recommendations = recommend_bias_only(user_bias, movie_biases,
-                       idx_to_movieid, movies_df, top_k)
+                       idx_to_movieid, movie_idx_rated,movies_df, top_k)
 
     return recommendations
 
 # case with embedding
 def make_recommendations(user_id,  movie_biases, u, v,
-                         movie_idx_rated, idx_to_movieid, movies_df,
+                         movie_idx_rated, idx_to_movieid, data_by_movie,movies_df,
                         top_k, bias_weight=0.05):
 
 
@@ -94,7 +96,9 @@ def make_recommendations(user_id,  movie_biases, u, v,
     for movie_idx in top_recommandation:
         if movie_idx in movie_idx_rated:
           continue
-
+        
+        if len(data_by_movie[movie_idx]) < 100:
+            continue
         if len(recommendations) >= top_k:
             break
 

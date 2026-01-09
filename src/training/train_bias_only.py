@@ -117,18 +117,6 @@ def cost_function_numba(indptr, indices, values, user_biases, movie_biases, lamd
 
     return rmse, loss
 
-# def convert_structure(data):
-#     """Convert data to CSR format"""
-#     indptr = [0]
-#     indices = []
-#     values = []
-#     for element in data:
-#         for idx, rate in element:
-#             indices.append(idx)
-#             values.append(rate)
-#         indptr.append(len(indices))
-#     return np.array(indptr, dtype=np.int32), np.array(indices, dtype=np.int32), np.array(values, dtype=np.float64)
-
 def train_numba(data_train_by_user, data_train_by_movie, data_test_by_user,
                     lamda, gamma, N):
     """Train bias-only model"""

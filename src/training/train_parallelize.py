@@ -74,7 +74,8 @@ def cost_function(indptr, indices, values, u_biases, m_biases, u, v, lamda, gamm
 
 
 def train(data_train_by_user, data_train_by_movie, data_test_by_user, 
-           k, lamda, gamma, tau, N):
+           k, lamda, gamma, tau, N, patience=5,seed=42):
+    np.random.seed(seed)
     m = len(data_train_by_user)
     n = len(data_train_by_movie)
     user_biases = np.zeros(m)
@@ -95,10 +96,12 @@ def train(data_train_by_user, data_train_by_movie, data_test_by_user,
     indptr_movie, indices_movie, values_movie = convert_structure(data_train_by_movie)
     indptr_test_user, indices_test_user, values_test_user = convert_structure(data_test_by_user)
 
-    
+    best_test_rmse = float('inf')
+    no_improvement = 0
     total_duration = 0
     start_time = time.time()
-    
+
+
     for iteration in range(N):
         update_biases_n_vec_embedding(indptr_user, indices_user, values_user,
                                       user_biases, movie_biases, u, v,
@@ -117,11 +120,12 @@ def train(data_train_by_user, data_train_by_movie, data_test_by_user,
                                     user_biases, movie_biases, u, v,
                                     lamda, gamma, tau)
 
-
-        rmse_train.append(r_train)
-        costs_train.append(loss_train)
-        rmse_test.append(r_test)
-        costs_test.append(loss_test)
+        # Early stopping check
+        if r_test <= best_test_rmse:
+            best_test_rmse = r_test
+            no_improvement = 0
+        else:
+            no_improvement += 1
 
 
         if (iteration + 1) % 5 == 0 or iteration == 0:
@@ -135,6 +139,16 @@ def train(data_train_by_user, data_train_by_movie, data_test_by_user,
                   f"Test RMSE: {r_test:6.4f}\t"
                   f"Time: {duration:6.2f}s")
             start_time = time.time()
+
+        if no_improvement > patience:
+            print(f"Early stopping at iteration {iteration + 1}")
+            break
+
+        
+        rmse_train.append(r_train)
+        costs_train.append(loss_train)
+        rmse_test.append(r_test)
+        costs_test.append(loss_test)
 
     print(f"Total duration: {total_duration:.2f}s")
 
@@ -151,6 +165,7 @@ def train(data_train_by_user, data_train_by_movie, data_test_by_user,
         'rmse_test': rmse_test,
         'costs_train': costs_train,
         'costs_test': costs_test,
+        'iterations_done': len(rmse_train),
         'duration': total_duration
     }
 
