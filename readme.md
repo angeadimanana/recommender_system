@@ -19,11 +19,11 @@ The `src` directory contains all the source code of the project.
   These structures define how the datasets are represented and accessed.
 
 - **`training/`**  
-  Contains all functions to **model training**, including:
+  Contains all functions to **model training**
   
 
 - **`prediction/`**  
-  Contains the code responsible for **generating recommendations**, including:
+  Contains the code responsible for **generating recommendations**
 
 
 ---
