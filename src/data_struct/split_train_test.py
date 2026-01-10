@@ -1,6 +1,6 @@
 import numpy as np
 
-def split_train_test(filename, split_ratio,seed):
+def split_train_test(filename, split_ratio,seed=42):
     """
     It builds structure for the data and split it in two sets:
     train and test with ratio (e.g 0.8 --> Train: 80%; Test: 20%)
